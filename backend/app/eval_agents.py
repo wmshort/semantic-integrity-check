@@ -62,12 +62,19 @@ JACCARD_COLLAPSE_THRESHOLD = 0.85
 # Deterministic heuristic scorer
 # ---------------------------------------------------------------------------
 def _first_sentence(text: str) -> str:
-    stripped = text.strip()
-    for sep in (". ", "! ", "? ", "\n"):
-        idx = stripped.find(sep)
+    # Skip Markdown headings and blank lines so the quoted "policy rule" is real
+    # prose, not a document title.
+    prose_lines = [
+        ln.strip()
+        for ln in text.strip().splitlines()
+        if ln.strip() and not ln.lstrip().startswith("#")
+    ]
+    body = " ".join(prose_lines) if prose_lines else text.strip()
+    for sep in (". ", "! ", "? "):
+        idx = body.find(sep)
         if idx != -1:
-            return stripped[: idx + 1].strip()
-    return stripped[:240]
+            return body[: idx + 1].strip()
+    return body[:240]
 
 
 def heuristic_scorecard(
