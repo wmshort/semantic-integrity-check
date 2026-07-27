@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: #e5e7eb;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Layered radial washes over a near-black base for quiet depth. */
+  background-color: #0b0d13;
+  background-image:
+    radial-gradient(60rem 60rem at 12% -10%, rgba(16, 185, 129, 0.06), transparent 60%),
+    radial-gradient(50rem 50rem at 100% 0%, rgba(249, 115, 22, 0.05), transparent 55%);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: rgba(16, 185, 129, 0.25);
+}
+
+/* Highlighted, offending output spans in the split view. */
+.divergence-mark {
+  border-radius: 3px;
+  padding: 1px 2px;
+  cursor: help;
+  transition: filter 120ms ease;
+}
+.divergence-mark:hover {
+  filter: brightness(1.25);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2f3d;
+  border-radius: 6px;
+}
