@@ -38,7 +38,23 @@ exclusive.
 | [`outputs/07-scope-shift.txt`](outputs/07-scope-shift.txt) | **Scope Shift** | — | "every student… automatically" widens the policy's *eligible / at discretion* set |
 | [`outputs/08-participant-role-shift.txt`](outputs/08-participant-role-shift.txt) | **Participant-Role Shift** | Deontic, Temporal | "we will submit… and approve it for you" takes on the applicant's duty |
 | [`outputs/09-pathos-injection.txt`](outputs/09-pathos-injection.txt) | **Pathos Injection** | Epistemic | sympathetic framing ("so sorry… don't worry") added to a neutral policy |
+| [`outputs/10-combined.txt`](outputs/10-combined.txt) | **all eight** | — | a realistic bad answer that trips every single-output mechanism at once (risk 100/100) |
 | [`outputs/05-faithful.txt`](outputs/05-faithful.txt) | *(compliant)* | — | preserves modality, numbers, and conditions — **no findings** |
+
+Real failures usually exhibit several mechanisms together (as `10-combined`
+shows), which is expected — the mechanisms are analytic categories, not a
+partition.
+
+## What an audit produces
+
+Each finding carries a mechanism name, a severity (1–5), the verbatim reference
+and output quotes it is anchored to, a plain-language **explanation**, and a
+**mitigation**. In the default **deterministic baseline** the explanation and
+mitigation are *templated* by the detector that fired — assembled by code from a
+fixed sentence pattern with the specific evidence slotted in, so they are
+reproducible and never hallucinated (no LLM is involved). Enabling **Use agentic
+adjudicator** (with a key) instead has an LLM write those sentences per audit,
+grounded on the same deterministic features.
 
 Auditing `05-faithful.txt` returns **Compliant** with risk 1/100 — the control
 case that shows the tool does not simply flag every paraphrase.
