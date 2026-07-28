@@ -23,6 +23,12 @@ down and every audited asset is gone. Keys stay in the browser, and the
 deterministic checks are entirely local; text is sent onward only when *you*
 choose to generate or adjudicate with a remote model.
 
+![An audit report — risk gauge, split-screen highlights, and per-mechanism findings](docs/images/audit-report.png)
+
+*An audit in the deterministic baseline (no API key): the split-screen view
+highlights the offending output spans, and each finding names its mechanism,
+severity, evidence quotes, explanation, and mitigation.*
+
 ---
 
 ## Why a hybrid engine
@@ -58,6 +64,13 @@ Reference + Output ──▶ Deterministic layer (spaCy)  ──▶ Linguistic h
 Because the numbers, modals, and clauses are located deterministically before
 the model is ever consulted, the agent acts as a structured reviewer rather than
 a blind analyst — which keeps citations honest and shrinks token usage.
+
+In the deterministic baseline, each finding's explanation and mitigation are
+*templated* by the detector that fired (reproducible, never hallucinated). With
+the agentic adjudicator enabled they are written by the model per audit, grounded
+on the same features — richer and more context-specific:
+
+![The same audit with the agentic adjudicator — model-written, context-specific findings](docs/images/audit-report-agentic.png)
 
 ---
 
@@ -157,6 +170,8 @@ key (or point at a local Ollama server), and chat with the model. Then enable
 - **Providing the output.** Step 2 offers three methods:
   - **Generate** — a **live chat** with the target model. One exchange or many;
     the full history is sent each turn and the assistant's turns are audited.
+
+    ![Live chat with the target model](docs/images/live-chat.png)
   - **Import** — drop one file or many. A transcript is reduced to its assistant
     turns; a plain file is kept as-is. Multiple files are audited together as a
     single unit.
