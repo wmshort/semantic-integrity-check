@@ -480,7 +480,7 @@ def _build_model(provider: str, model: str, base_url: Optional[str]):
     raise ValueError(f"Unsupported provider for evaluation: {provider}")
 
 
-def run_agent_evaluation(
+async def run_agent_evaluation(
     reference_text: str,
     response_text: str,
     hints: ParserHints,
@@ -491,7 +491,8 @@ def run_agent_evaluation(
     comparison_text: Optional[str] = None,
 ) -> EvaluationScorecard:
     """Invoke the Pydantic AI adjudicator; raise on any failure so the caller
-    can fall back to the heuristic scorer."""
+    can fall back to the heuristic scorer. Awaited on the request event loop so
+    the provider's async client stays bound to a live loop."""
     from pydantic_ai import Agent
 
     llm_model = _build_model(provider, model, base_url)
@@ -503,7 +504,7 @@ def run_agent_evaluation(
     user_prompt = _build_user_prompt(
         reference_text, response_text, hints, active_modules, comparison_text
     )
-    result = agent.run_sync(user_prompt)
+    result = await agent.run(user_prompt)
     # pydantic-ai exposes the typed result as .data (older) or .output (newer).
     scorecard = getattr(result, "data", None)
     if scorecard is None:

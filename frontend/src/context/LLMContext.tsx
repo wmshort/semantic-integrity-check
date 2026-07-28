@@ -38,7 +38,7 @@ const STORAGE_KEY = 'sic.llm.settings.v1';
 export const DEFAULT_MODELS: Record<Provider, string> = {
   anthropic: 'claude-sonnet-4-5-20250929',
   openai: 'gpt-4o',
-  gemini: 'gemini-1.5-pro',
+  gemini: 'gemini-2.5-flash',
   ollama: 'llama3.1',
 };
 

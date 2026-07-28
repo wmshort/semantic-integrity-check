@@ -284,7 +284,7 @@ def generate(
 # Evaluation endpoint
 # ---------------------------------------------------------------------------
 @app.post("/api/evaluate", response_model=EvaluateResponse)
-def evaluate(
+async def evaluate(
     req: EvaluateRequest,
     x_api_key: Optional[str] = Header(default=None),
 ) -> EvaluateResponse:
@@ -315,7 +315,7 @@ def evaluate(
         }.get(provider)
         try:
             with _transient_env(**({env_key: x_api_key} if env_key else {})):
-                scorecard = eval_agents.run_agent_evaluation(
+                scorecard = await eval_agents.run_agent_evaluation(
                     reference_text=req.reference_text,
                     response_text=req.response_text,
                     hints=hints,
