@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   MessagesSquare,
   ChevronDown,
-  GitCompare,
   Wand2,
   Upload,
   ClipboardPaste,
@@ -13,7 +12,6 @@ import { StepHeader } from './StepHeader';
 import { ChatConsole } from './ChatConsole';
 import { OutputImport } from './OutputImport';
 import { ScenarioCapture } from './ScenarioCapture';
-import { ScenarioLockBar } from './ScenarioLockBar';
 import type { CapturedScenario, ChatMessage, UploadedDoc } from '../lib/types';
 
 export type OutputMethod = 'generate' | 'import' | 'paste';
@@ -170,18 +168,13 @@ export function OutputStep(props: Props) {
 
       {/* ---- Differential Context scenario capture ---- */}
       {props.differentialOn && (
-        <div className="flex flex-col gap-2 border-t border-surface-border pt-3">
-          <div className="flex items-center gap-1.5 text-xs font-medium text-orange-200">
-            <GitCompare size={13} /> Differential Context — capture two scenarios
-          </div>
-          <ScenarioLockBar
+        <div className="border-t border-surface-border pt-3">
+          <ScenarioCapture
             subject={props.captureSubject}
             canCapture={props.canCaptureScenario}
-            isA={props.currentIsA}
-            isB={props.currentIsB}
+            currentIsA={props.currentIsA}
+            currentIsB={props.currentIsB}
             onCapture={props.onCaptureScenario}
-          />
-          <ScenarioCapture
             scenarioA={props.scenarioA}
             scenarioB={props.scenarioB}
             onClear={props.onClearScenario}
