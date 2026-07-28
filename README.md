@@ -2,40 +2,39 @@
 
 *A [Semiosphere](#about-semiosphere) project.*
 
-**Find where an LLM's answer quietly stops meaning what your policy meant.**
+**Find where an LLM's outputs quietly diverge from the meaning of policy documents.**
 
-Semantic Integrity Check is a local-first web app that compares a set of
-**reference documents** (policies, guidelines, specs — `.txt`, `.md`, `.pdf`,
-`.docx`) against a **generated LLM response** — or a whole **conversation** — and
-flags precise *semantic divergences*: the subtle shifts in meaning that slip past
-keyword filters and human skim-reads:
+Semantic Integrity Check is a light-weight, local-first web app that compares 
+**generated LLM responses** (pasted, imported, or generated live) against a 
+set of **reference documents** (policies, guidelines, specs in `.txt`, `.md`,
+`.pdf`, `.docx` format) — and flags precise *semantic divergences*: the subtle
+shifts in meaning that slip past keyword filters and human skim-reads: e.g.,
 
 - a permission (**"may"**) quietly promoted to an obligation (**"must"**) or a
   guarantee,
 - a numeric limit, cap, or deadline invented or moved,
 - a required condition (**"unless you have already…"**) silently dropped,
 - a neutral record-keeper suddenly speaking with personal authority
-  (**"I guarantee…"**),
+  (**"I guarantee . . . "**),
 - one generic answer reused across two materially different situations.
 
-It runs on your machine via Docker Compose and persists nothing — tear the stack
-down and every audited asset is gone. Keys stay in the browser, and the
-deterministic checks are entirely local; text is sent onward only when *you*
-choose to generate or adjudicate with a remote model.
+It runs on your machine via Docker Compose and persists nothing. Keys stay in
+the browser, and the deterministic checks are entirely local; text is sent onward
+only when *you* choose to generate or adjudicate with a remote model. Or use a
+local model for fully offline operation.
 
 ![An audit report — risk gauge, split-screen highlights, and per-mechanism findings](docs/images/audit-report.png)
 
-*An audit in the deterministic baseline (no API key): the split-screen view
-highlights the offending output spans, and each finding names its mechanism,
-severity, evidence quotes, explanation, and mitigation.*
+*An audit using the deterministic baseline: the split-screen view highlights the
+offending output spans, and each finding names its mechanism, severity, evidence
+quotes, explanation, and mitigation.*
 
 ---
 
-## Why a hybrid engine
+## Hybrid deterministic + agentic architecture
 
-Asking an LLM to "check this for policy violations" is unreliable: it
-hallucinates quotes, invents thresholds, and misses grammatical detail. Semantic
-Integrity Check instead uses a **hybrid deterministic + agentic** pipeline.
+Semantic Integrity Check uses a **hybrid deterministic + agentic** pipeline to provide
+a light-weight but rigorous and theoretically grounded audit of LLM outputs. 
 
 ```
 Reference + Output ──▶ Deterministic layer (spaCy)  ──▶ Linguistic hints
@@ -43,38 +42,36 @@ Reference + Output ──▶ Deterministic layer (spaCy)  ──▶ Linguistic h
                         · conditional / temporal clauses         │
                         · numbers, dates, defined terms          ▼
                         · hedge/booster & speaker footing   Adjudicator
-                        · cross-output lexical overlap      · heuristic (no LLM), or
-                                                            · Pydantic AI (structured)
+                        · cross-output lexical overlap      · heuristic, or
+                                                            · structured
                                                                  │
                                                                  ▼
-                                                      Type-safe scorecard
+                                                              Scorecard
 ```
 
-1. A fast, exact **deterministic layer** (spaCy dependency parsing + auditable
+1. A fast **deterministic layer** (spaCy dependency parsing + auditable
    lexicons) extracts *index-verified* linguistic features and pins them to real
    token positions.
 2. An **adjudicator** turns those features into a strict, typed scorecard. It
    runs in one of two modes:
    - **Deterministic baseline** — zero API keys, zero token cost, fully
      reproducible. Great for a fast first pass or budget-constrained runs.
-   - **Agentic** — a [Pydantic AI](https://ai.pydantic.dev/) agent adjudicates
-     the borderline calls, *grounded* on the deterministic hints so it cannot
-     invent quotes or deadlines.
+   - **Agentic** — an agent adjudicates the borderline calls, *grounded*
+      on the deterministic hints.
 
-Because the numbers, modals, and clauses are located deterministically before
-the model is ever consulted, the agent acts as a structured reviewer rather than
-a blind analyst — which keeps citations honest and shrinks token usage.
+Because linguistic features are located deterministically before the model is
+ever consulted, the agent acts as a structured reviewer rather than a blind
+analyst.
 
 In the deterministic baseline, each finding's explanation and mitigation are
-*templated* by the detector that fired (reproducible, never hallucinated). With
-the agentic adjudicator enabled they are written by the model per audit, grounded
-on the same features — richer and more context-specific:
+*templated* by the detector that fired. With the agentic adjudicator enabled
+they are written by the model per audit, grounded on the same features:
 
-![The same audit with the agentic adjudicator — model-written, context-specific findings](docs/images/audit-report-agentic.png)
+![The same audit with the agentic adjudicator](docs/images/audit-report-agentic.png)
 
 ---
 
-## The evaluation modules
+## Evaluation modules
 
 | Module | Detects | Mechanism |
 | --- | --- | --- |
@@ -100,7 +97,7 @@ is a cross-output pattern rather than a single-text mechanism.
 
 Semantic Integrity Check is not a bag of regexes. Each evaluator operationalises
 a specific, well-established area of **linguistic pragmatics and formal
-semantics** — the study of how meaning is constructed, committed to, and made
+semantics** — part of the study of how meaning is constructed, committed to, and made
 sensitive to context. Surface-level checks (keywords, toxicity, formatting) miss
 these failures precisely because the words stay plausible while the *meaning*
 moves.
@@ -118,12 +115,10 @@ moves.
 | **Differential Context Validation** | Context-sensitivity of meaning; "context collapse" | The same utterance can be appropriate in one situation and harmful in another. Context collapse is the failure to differentiate — one generic default reused across materially different stakes or audiences. |
 
 The **hybrid architecture** is itself a theoretical commitment: linguistic
-structure that can be established mechanically (a modal auxiliary, a cardinal
+structure that can be established programmatically (a modal auxiliary, a cardinal
 number, a subordinating conjunction) is established *deterministically* and
 pinned to real token positions, so the adjudicator reasons over grounded evidence
-rather than re-deriving — and potentially hallucinating — the facts. The same
-grounding is surfaced in the app itself — a framing panel at the top, and the
-theory behind each evaluator on its own module card.
+rather than re-deriving — and potentially hallucinating — the facts.
 
 ---
 
@@ -139,9 +134,9 @@ Then open **<http://localhost:8080>**. The backend API is on
 <http://localhost:8000>.
 
 That's the whole install. Everything runs locally and offline (aside from the
-outbound call the backend proxy makes to whichever model provider *you* choose).
+outbound call the backend proxy makes to a model provider *you* choose).
 
-### Try it in 30 seconds
+### A sample use case
 
 1. Under **① Reference documents**, upload
    [`samples/reference/course-extension-policy.md`](samples/reference/course-extension-policy.md)
@@ -156,7 +151,7 @@ sentence highlighted, plus a couple of related flags. No API key required; this
 uses the deterministic baseline. (For a fuller worked set, see
 [`samples/`](samples/).)
 
-To have a real model *generate* the output first, switch **② Output to audit** to
+To have a real model generate the output first, switch **② Output to audit** to
 **Generate** — a **Target model** card appears; pick a provider, paste your API
 key (or point at a local Ollama server), and chat with the model. Then enable
 **Agentic adjudicator** in step 3 before running the audit.
@@ -226,7 +221,7 @@ reproducible.
    Audits**: a **Context Collapse** finding reports the two outputs are
    ~100% identical, above the 85% threshold.
 
-### At the API
+### Using the API
 
 The same two checks, reproducibly, with `use_agent: false` (no key, no tokens):
 
@@ -296,7 +291,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-Run the tests (deterministic path — no keys or network needed):
+Run the tests (deterministic path):
 
 ```bash
 pip install pytest httpx
@@ -318,7 +313,7 @@ The dev server talks to the backend on `:8000`. Override with
 
 ## Privacy & data handling
 
-This project is designed so that **you never have to trust it with anything.**
+This project is designed so that:
 
 - **Keys stay in the browser.** API keys live only in `localStorage` and are sent
   in an `x-api-key` header directly to the *local* backend proxy at request time.
@@ -326,7 +321,7 @@ This project is designed so that **you never have to trust it with anything.**
 - **No persistence.** The backend is stateless. Uploaded documents exist only for
   the duration of a request. Stopping the container wipes everything.
 - **No external tracking.** The only outbound network calls are the model
-  requests *you* trigger, to the provider *you* choose. Open your browser's
+  requests you trigger, to the provider you choose. Open your browser's
   network tab and verify it yourself.
 
 ---
@@ -366,12 +361,13 @@ Supported providers: **Anthropic**, **OpenAI**, **Gemini**, and local **Ollama**
 
 ## About Semiosphere
 
-Semiosphere works on making the *meaning* of language machine-legible — treating
-semantics and pragmatics as first-class engineering concerns rather than
-afterthoughts. Semantic Integrity Check is a compact, open preview of that
-approach: a working demonstration that the drift between what a document *says*
-and what a model *makes it mean* can be detected precisely, explained in the
-vocabulary of linguistics, and grounded in verifiable evidence.
+Semiosphere applies insights and theories from the humanities and the cognitive
+sciences — cognitive linguistics, cultural anthropology, semiotics, semantics,
+and rhetoric — to how artificial intelligence is designed, implemented, and put to use. 
+Semantic Integrity Check is a light-weight, open preview of that approach: a working
+demonstration that the drift between what a document *means* and what a model
+*says it means* can be detected precisely, explained in the vocabulary of linguistics,
+and grounded in verifiable evidence.
 
 ## Contributing
 
