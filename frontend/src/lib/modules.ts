@@ -46,7 +46,7 @@ export const EVALUATION_MODULES: EvaluationModule[] = [
   {
     id: 'temporal',
     name: 'Temporal Validation',
-    blurb: 'Evaluates step sequencing and qualification omissions.',
+    blurb: 'Flags a required condition dropped from the output.',
     mechanism: 'Temporal-Condition Reversal',
     question: 'Has the when changed, or a required condition gone missing?',
     theoryTitle: 'Conditional semantics & presupposition',
@@ -54,13 +54,14 @@ export const EVALUATION_MODULES: EvaluationModule[] = [
       'A conditional ("unless you have already applied") restricts the situations in which a ' +
       'claim holds; dropping it broadens the claim’s scope and defeats a required ' +
       'precondition. Drawing on the semantics of conditionals and pragmatic presupposition, ' +
-      'this module detects reordered procedures and qualifying clauses present in the reference ' +
-      'but absent from the output.',
+      'the deterministic check flags a conditional word in the reference that is absent from the ' +
+      'output when the output also makes a strong commitment. In agentic mode the model is also ' +
+      'asked about reordered steps.',
   },
   {
     id: 'quant',
     name: 'Quant-Entity Validation',
-    blurb: 'Validates limits, caps, and stipulative terms.',
+    blurb: 'Compares numbers, dates and limits with the reference.',
     mechanism: 'Quantitative Divergence',
     question: 'Do the numbers, dates and limits match the policy exactly?',
     theoryTitle: 'Stipulative definition & semantic bleaching',
@@ -68,8 +69,9 @@ export const EVALUATION_MODULES: EvaluationModule[] = [
       'Reference documents rely on stipulative meaning — terms and thresholds defined to mean ' +
       'exactly one thing ("90 days", "Eligible Member"). Semantic bleaching is the drift of such ' +
       'a precise term toward its generic sense, and a bounded quantity can be quietly moved or ' +
-      'invented. This module binds numbers, dates, and defined terms to their exact positions ' +
-      'before comparison, so an altered limit cannot slip through.',
+      'invented. The deterministic check flags a number, quantity, date or time in the output that ' +
+      'the reference does not contain; money amounts and percentages are not compared. In ' +
+      'agentic mode the model is also asked about defined terms used in their ordinary sense.',
   },
   {
     id: 'epistemic',

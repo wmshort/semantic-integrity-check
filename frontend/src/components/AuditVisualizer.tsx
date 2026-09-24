@@ -202,7 +202,7 @@ export function AuditVisualizer({ referenceText, responseText, result }: Props) 
         </p>
         <p className="mt-1 max-w-sm text-xs text-gray-600">
           Offending output spans are underlined by severity; hover to see the
-          matching policy rule and diagnosis.
+          quoted reference text and the diagnosis.
         </p>
       </section>
     );

@@ -346,8 +346,10 @@ export default function App() {
         </div>
       </main>
       <footer className="mx-auto max-w-[1400px] px-6 pb-8 pt-2 text-center text-xs text-gray-600">
-        All processing is local. Uploaded documents and keys never leave your
-        machine or persist beyond this container.
+        The deterministic checks run entirely on your machine. When you generate
+        outputs or run the agentic adjudicator with a remote model, the texts are
+        sent to the provider you choose. API keys are kept in this browser's
+        local storage.
       </footer>
     </div>
   );
