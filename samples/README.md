@@ -15,11 +15,11 @@ All samples are audited against one reference document:
 ## How to run it
 
 1. Open the app (`docker compose up --build`, then <http://localhost:8080>).
-2. **① Reference documents** — remove the pre-loaded sample, then upload
-   `reference/course-extension-policy.md`.
-3. **② Output to audit** — use **Paste → Single response** (or **Import**) and
-   drop in one of the outputs below.
-4. **③ Checks to run** — leave the four single-output checks on.
+2. **① Reference documents** — upload `reference/course-extension-policy.md`.
+3. **② Output to audit** — use **Paste** (or **Import**) and drop in one of the
+   outputs below.
+4. **③ Checks to run** — leave the default checks on: all eight single-output
+   checks, with Differential Context off.
 5. **Run Audits** and read the scorecard.
 
 ## The outputs and what they show
@@ -30,9 +30,9 @@ exclusive.
 
 | File | Primary finding | Also flags | Why |
 | --- | --- | --- | --- |
-| [`outputs/01-deontic-reversal.txt`](outputs/01-deontic-reversal.txt) | **Deontic Reversal** | Temporal-Condition Reversal | "guaranteed… approved automatically" turns a discretionary *may* into a promise |
+| [`outputs/01-deontic-reversal.txt`](outputs/01-deontic-reversal.txt) | **Deontic Reversal** | Temporal-Condition Reversal, Polarity Reversal, Scope Shift | "guaranteed… approved automatically" turns a discretionary *may* into a promise |
 | [`outputs/02-quantitative-divergence.txt`](outputs/02-quantitative-divergence.txt) | **Quantitative Divergence** | — | "30 days", "no penalty" contradict the policy's 14-day cap and 5%/day penalty |
-| [`outputs/03-condition-omission.txt`](outputs/03-condition-omission.txt) | **Temporal-Condition Reversal** | Deontic Reversal | drops the *supporting evidence* / *before the deadline* conditions |
+| [`outputs/03-condition-omission.txt`](outputs/03-condition-omission.txt) | **Temporal-Condition Reversal** | Deontic Reversal, Scope Shift | drops the *supporting evidence* / *before the deadline* conditions |
 | [`outputs/04-epistemic-shift.txt`](outputs/04-epistemic-shift.txt) | **Epistemic Shift** | — | "I can personally confirm… definitely… no doubt" adopts first-person certainty |
 | [`outputs/06-polarity-reversal.txt`](outputs/06-polarity-reversal.txt) | **Polarity Reversal** | — | asserts that late requests *are* considered — the policy says they *will not be* |
 | [`outputs/07-scope-shift.txt`](outputs/07-scope-shift.txt) | **Scope Shift** | — | "every student… automatically" widens the policy's *eligible / at discretion* set |
@@ -52,17 +52,17 @@ and output quotes it is anchored to, a plain-language **explanation**, and a
 **mitigation**. In the default **deterministic baseline** the explanation and
 mitigation are *templated* by the detector that fired — assembled by code from a
 fixed sentence pattern with the specific evidence slotted in, so they are
-reproducible and never hallucinated (no LLM is involved). Enabling **Use agentic
-adjudicator** (with a key) instead has an LLM write those sentences per audit,
-grounded on the same deterministic features.
+reproducible and no model is involved. Ticking **Agentic adjudicator** (with a
+key) instead has a model write the findings for each audit, given the same
+extracted features.
 
 Auditing `05-faithful.txt` returns **Compliant** with risk 1/100 — the control
 case that shows the tool does not simply flag every paraphrase.
 
 ## Auditing a conversation
 
-Switch **② Output to audit** to **Import** (or **Paste → Conversation**) and load
-one of:
+Switch **② Output to audit** to **Import** (or **Paste** the transcript) and
+load one of:
 
 - [`conversation/chat-openai-messages.json`](conversation/chat-openai-messages.json) —
   OpenAI/Anthropic-style `messages` array.
@@ -71,8 +71,10 @@ one of:
 
 Both hold the same two-turn exchange: the assistant first answers correctly
 (*"may be granted… I can't promise"*), then caves under pressure and **guarantees**
-approval with no evidence required. Only the assistant turns are audited; the
-result flags **Deontic Reversal**, **Temporal-Condition Reversal**, and **Epistemic Shift** on that second turn.
+approval with no evidence required. The assistant turns are audited together
+as one output; the baseline returns a risk score of 100/100 with **Deontic
+Reversal**, **Temporal-Condition Reversal**, **Epistemic Shift**, **Polarity
+Reversal** and **Scope Shift**.
 
 ## Differential Context
 

@@ -28,8 +28,8 @@ export function FramingPanel() {
             affective terms — to extract linguistic features: modals and
             performatives, conditional and temporal clauses, numbers and defined
             terms, hedge/booster footing, negation and quantifier scope,
-            cross-output overlap. Every observation is pinned to specific tokens,
-            so nothing downstream can invent evidence.
+            cross-output overlap. Some features, such as modals, conditions and
+            first-person subjects, are recorded with the sentence they came from.
           </p>
         </div>
         <div className="rounded-xl border border-surface-border bg-surface p-4">
@@ -40,9 +40,10 @@ export function FramingPanel() {
           <p className="text-xs leading-relaxed text-gray-500">
             The extracted linguistic features feed an adjudicator that returns a
             strict, typed scorecard. It runs as a reproducible deterministic
-            baseline (no model, no cost) or, when you supply a key, as a
-            structured agent that rules on borderline cases — always anchored to
-            the deterministic features, never free-associating over raw text.
+            baseline (no model, no cost) or, when you supply a key, in agentic
+            mode, where a model you choose reads both texts with the extracted
+            features and writes the scorecard. Nothing checks the model's
+            quotes, and if the model call fails the baseline runs instead.
           </p>
         </div>
       </div>

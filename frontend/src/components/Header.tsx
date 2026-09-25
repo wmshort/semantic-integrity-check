@@ -32,7 +32,7 @@ export function Header({ onAbout }: Props) {
           </button>
           <div
             className="flex items-center gap-2 rounded-full border border-surface-border bg-surface px-3 py-1.5 text-xs text-gray-400"
-            title="The app runs on your machine and persists nothing; your keys stay in the browser. Text is sent to a provider only when you generate or run the agentic adjudicator with a remote model — the deterministic checks stay entirely local."
+            title="The app runs on your machine; your API keys are kept in this browser's local storage. Text is sent to a provider only when you generate outputs or run the agentic adjudicator with a remote model; the deterministic checks stay entirely local."
           >
             <Lock size={13} className="text-emerald-400" />
             Local-first
